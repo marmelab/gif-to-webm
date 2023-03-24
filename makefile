@@ -6,8 +6,5 @@ help:
 install: package.json ## install dependencies
 	npm install
 
-run: ## run the app
-	npm run dev
-
 build: ## build the app
 	npm run build
