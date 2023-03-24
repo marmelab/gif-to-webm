@@ -4,6 +4,7 @@ import { parseGifFiles } from "./parseGifFiles";
 import { humanFileSize } from "./humanFileSize";
 import { convertGifFilesToWebM } from "./convertGifToWebM";
 import { parseWebMFiles } from "./parseWebMFiles";
+import { replaceLinks } from "./replaceLinks";
 
 sourceMapSupport.install();
 
@@ -17,7 +18,7 @@ program
     "exclude pattern from source folder search (separate multiple patterns with comma)",
     "node_modules/**"
   )
-  .option("-p, --pattern <pattern>", "doc files pattern")
+  .option("-p, --pattern <pattern>", "doc files pattern", "**/*.md")
   .option(
     "-t, --template <path>",
     "template file holding the WebM player html code",
@@ -52,6 +53,14 @@ program
 
     const { totalWebMFilesSize } = await parseWebMFiles(convertedFiles);
     console.info(`Total WebM files size: ${humanFileSize(totalWebMFilesSize)}`);
+
+    const replacedFiles = await replaceLinks(
+      folder,
+      pattern,
+      template,
+      gifFiles.slice(0, 1)
+    );
+    console.info(`Successfully edited ${replacedFiles.length} doc files`);
   });
 
 program.parse();

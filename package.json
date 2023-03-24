@@ -22,7 +22,8 @@
     "chalk": "^5.2.0",
     "commander": "^10.0.0",
     "fluent-ffmpeg": "^2.1.2",
-    "glob": "^9.3.2"
+    "glob": "^9.3.2",
+    "replace-in-file": "^6.3.5"
   },
   "devDependencies": {
     "@types/fluent-ffmpeg": "^2.1.21",
