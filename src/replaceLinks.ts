@@ -22,10 +22,15 @@ export const replaceLinks = async (
   const promises = gifFileNames.filter(Boolean).map((gifFileName) => {
     const options: ReplaceInFileConfig = {
       files: docFiles,
-      from: RegExp(`!\\[.+\\]\\(.+${gifFileName?.replace(".", "\\.")}\\)`, "g"),
+      from: RegExp(
+        `!\\[[^\\[]+\\]\\(\\S+${gifFileName?.replace(".", "\\.")}\\)`,
+        "g"
+      ),
       to: (match) => {
         const previousLink = match.match(
-          RegExp(`!\\[.+\\]\\((.+${gifFileName?.replace(".", "\\.")})\\)`)
+          RegExp(
+            `!\\[[^\\[]+\\]\\((\\S+${gifFileName?.replace(".", "\\.")})\\)`
+          )
         )?.[1];
         return templateAsString.replace(
           "%webm_file%",
