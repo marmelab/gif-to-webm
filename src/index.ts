@@ -1,5 +1,6 @@
 import sourceMapSupport from "source-map-support";
 import { program } from "commander";
+import chalk from "chalk";
 import { parseGifFiles } from "./parseGifFiles";
 import { humanFileSize } from "./humanFileSize";
 import { convertGifFilesToWebM } from "./convertGifToWebM";
@@ -31,36 +32,59 @@ program
   )
   .action(async (options) => {
     const { folder, excludePattern, pattern, template, quality } = options;
-    console.log(`folder: ${folder}`);
-    console.log(`excludePattern: ${excludePattern}`);
-    console.log(`pattern: ${pattern}`);
-    console.log(`template: ${template}`);
-    console.log(`quality: ${quality}`);
+    console.log(chalk.dim("Parsed options:"));
+    console.log(chalk.dim(`folder: ${folder}`));
+    console.log(chalk.dim(`excludePattern: ${excludePattern}`));
+    console.log(chalk.dim(`pattern: ${pattern}`));
+    console.log(chalk.dim(`template: ${template}`));
+    console.log(chalk.dim(`quality: ${quality}`));
+    console.log();
 
-    const { gifFiles, totalGifFilesSize } = await parseGifFiles(
-      folder,
-      excludePattern
-    );
-    console.info(`Found ${gifFiles.length} GIF files`);
-    console.info(`Total GIF files size: ${humanFileSize(totalGifFilesSize)}`);
+    try {
+      const { gifFiles, totalGifFilesSize } = await parseGifFiles(
+        folder,
+        excludePattern
+      );
+      console.info(`Found ${chalk.bold(gifFiles.length)} GIF files`);
+      console.info(
+        `Total GIF files size: ${chalk.bold(
+          chalk.yellow(humanFileSize(totalGifFilesSize))
+        )}`
+      );
 
-    const convertedFiles = await convertGifFilesToWebM(
-      folder,
-      gifFiles.slice(0, 1),
-      quality
-    );
-    console.info(`Successfully converted ${convertedFiles.length} files`);
+      const convertedFiles = await convertGifFilesToWebM(
+        folder,
+        gifFiles,
+        quality
+      );
+      console.info(
+        chalk.green(
+          `Successfully converted ${chalk.bold(convertedFiles.length)} files`
+        )
+      );
 
-    const { totalWebMFilesSize } = await parseWebMFiles(convertedFiles);
-    console.info(`Total WebM files size: ${humanFileSize(totalWebMFilesSize)}`);
+      const { totalWebMFilesSize } = await parseWebMFiles(convertedFiles);
+      console.info(
+        `Total WebM files size: ${chalk.bold(
+          chalk.blue(humanFileSize(totalWebMFilesSize))
+        )}`
+      );
 
-    const replacedFiles = await replaceLinks(
-      folder,
-      pattern,
-      template,
-      gifFiles.slice(0, 1)
-    );
-    console.info(`Successfully edited ${replacedFiles.length} doc files`);
+      const replacedFiles = await replaceLinks(
+        folder,
+        pattern,
+        template,
+        gifFiles
+      );
+      console.info(
+        chalk.green(
+          `Successfully edited ${chalk.bold(replacedFiles.length)} doc files`
+        )
+      );
+    } catch (error) {
+      console.error(chalk.red((error as Error)?.message));
+      process.exit(1);
+    }
   });
 
 program.parse();
