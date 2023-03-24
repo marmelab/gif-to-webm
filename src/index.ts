@@ -2,6 +2,8 @@ import sourceMapSupport from "source-map-support";
 import { program } from "commander";
 import { parseGifFiles } from "./parseGifFiles";
 import { humanFileSize } from "./humanFileSize";
+import { convertGifFilesToWebM } from "./convertGifToWebM";
+import { parseWebMFiles } from "./parseWebMFiles";
 
 sourceMapSupport.install();
 
@@ -21,20 +23,35 @@ program
     "template file holding the WebM player html code",
     `${__dirname}/../template.html`
   )
+  .option(
+    "-q, --quality <number>",
+    "output quality, ranges between 0-63, lower means better quality",
+    "40"
+  )
   .action(async (options) => {
-    const { folder, excludePattern, pattern, template } = options;
+    const { folder, excludePattern, pattern, template, quality } = options;
     console.log(`folder: ${folder}`);
     console.log(`excludePattern: ${excludePattern}`);
     console.log(`pattern: ${pattern}`);
     console.log(`template: ${template}`);
+    console.log(`quality: ${quality}`);
 
     const { gifFiles, totalGifFilesSize } = await parseGifFiles(
       folder,
       excludePattern
     );
-    gifFiles.forEach((file) => console.log(file));
     console.info(`Found ${gifFiles.length} GIF files`);
     console.info(`Total GIF files size: ${humanFileSize(totalGifFilesSize)}`);
+
+    const convertedFiles = await convertGifFilesToWebM(
+      folder,
+      gifFiles.slice(0, 1),
+      quality
+    );
+    console.info(`Successfully converted ${convertedFiles.length} files`);
+
+    const { totalWebMFilesSize } = await parseWebMFiles(convertedFiles);
+    console.info(`Total WebM files size: ${humanFileSize(totalWebMFilesSize)}`);
   });
 
 program.parse();
