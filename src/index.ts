@@ -11,7 +11,8 @@ program
   .option("-p, --pattern <pattern>", "doc files pattern")
   .option(
     "-t, --template <path>",
-    "template file holding the WebM player html code"
+    "template file holding the WebM player html code",
+    `${__dirname}/../template.html`
   )
   .action((options) => {
     const { folder, pattern, template } = options;
