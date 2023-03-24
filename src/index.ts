@@ -6,7 +6,7 @@ import { humanFileSize } from "./humanFileSize";
 import { convertGifFilesToWebM } from "./convertGifToWebM";
 import { parseWebMFiles } from "./parseWebMFiles";
 import { replaceLinks } from "./replaceLinks";
-import { deleteGifFiles } from "./deleteGifFiles";
+import { deleteGifFiles as doDeleteGifFiles } from "./deleteGifFiles";
 
 sourceMapSupport.install();
 
@@ -31,14 +31,27 @@ program
     "output quality, ranges between 0-63, lower means better quality",
     "40"
   )
+  .option(
+    "-d, --delete-gif-files",
+    "set this flag to delete the original GIF files after conversion",
+    false
+  )
   .action(async (options) => {
-    const { folder, excludePattern, pattern, template, quality } = options;
+    const {
+      folder,
+      excludePattern,
+      pattern,
+      template,
+      quality,
+      deleteGifFiles,
+    } = options;
     console.log(chalk.dim("Parsed options:"));
     console.log(chalk.dim(`folder: ${folder}`));
     console.log(chalk.dim(`excludePattern: ${excludePattern}`));
     console.log(chalk.dim(`pattern: ${pattern}`));
     console.log(chalk.dim(`template: ${template}`));
     console.log(chalk.dim(`quality: ${quality}`));
+    console.log(chalk.dim(`deleteGifFiles: ${deleteGifFiles}`));
     console.log();
 
     try {
@@ -95,12 +108,14 @@ program
         )
       );
 
-      const removedFiles = await deleteGifFiles(folder, gifFiles);
-      console.info(
-        chalk.green(
-          `Successfully deleted ${chalk.bold(removedFiles.length)} GIF files`
-        )
-      );
+      if (deleteGifFiles) {
+        const removedFiles = await doDeleteGifFiles(folder, gifFiles);
+        console.info(
+          chalk.green(
+            `Successfully deleted ${chalk.bold(removedFiles.length)} GIF files`
+          )
+        );
+      }
     } catch (error) {
       console.error(chalk.red((error as Error)?.message));
       process.exit(1);
