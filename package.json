@@ -1,0 +1,31 @@
+{
+  "name": "gif-to-webm",
+  "version": "1.0.0",
+  "description": "Convert GIF files to WebM and replace links to them in doc files",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "cd src && tsc --outDir ../dist",
+    "dev": "ts-node src/index.ts",
+    "run": "node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marmelab/gif-to-webm.git"
+  },
+  "author": "jb@marmelab.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/marmelab/gif-to-webm/issues"
+  },
+  "homepage": "https://github.com/marmelab/gif-to-webm#readme",
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "commander": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/source-map-support": "^0.5.6",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.2"
+  }
+}
