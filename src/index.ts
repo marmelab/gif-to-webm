@@ -69,6 +69,18 @@ program
           chalk.blue(humanFileSize(totalWebMFilesSize))
         )}`
       );
+      console.info(
+        `Reduced assets size by ${chalk.bold(
+          chalk.green(
+            `${(
+              Math.round(
+                ((totalGifFilesSize - totalWebMFilesSize) / totalGifFilesSize) *
+                  10000
+              ) / 100
+            ).toFixed(2)} %`
+          )
+        )}!`
+      );
 
       const replacedFiles = await replaceLinks(
         folder,

@@ -36,8 +36,8 @@ export const convertGifFilesToWebM = async (
   quality: string
 ) => {
   const parsedQuality = parseInt(quality) || 40;
-  // Unfortunately fluent-ffmpeg does not seem to support parallel processing
-  // So we need to convert the files sequentially
+  // It seems better to process the files one at a time because otherwise
+  // the ffmpeg processes are very resource intensive and can freeze the host.
   const webmFiles: string[] = [];
   for (const file of gifFiles) {
     const webmFile = await convertSingleGifFileToWebM(
