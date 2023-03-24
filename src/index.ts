@@ -6,6 +6,7 @@ import { humanFileSize } from "./humanFileSize";
 import { convertGifFilesToWebM } from "./convertGifToWebM";
 import { parseWebMFiles } from "./parseWebMFiles";
 import { replaceLinks } from "./replaceLinks";
+import { deleteGifFiles } from "./deleteGifFiles";
 
 sourceMapSupport.install();
 
@@ -91,6 +92,13 @@ program
       console.info(
         chalk.green(
           `Successfully edited ${chalk.bold(replacedFiles.length)} doc files`
+        )
+      );
+
+      const removedFiles = await deleteGifFiles(folder, gifFiles);
+      console.info(
+        chalk.green(
+          `Successfully deleted ${chalk.bold(removedFiles.length)} GIF files`
         )
       );
     } catch (error) {
