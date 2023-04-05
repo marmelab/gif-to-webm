@@ -2,7 +2,7 @@ import { getRegExp } from "./replaceLinks";
 
 describe("replaceLinks", () => {
   describe("RegExp", () => {
-    it("should match a link", () => {
+    it("should match a gif file", () => {
       const inputString = "![TimeInput Firefox](./img/time-input-firefox.gif)";
       const gifFileName = "time-input-firefox.gif";
       const regExp = RegExp(getRegExp(gifFileName), "g");
@@ -12,7 +12,32 @@ describe("replaceLinks", () => {
       ]);
     });
 
-    it("should match several links on the same line", () => {
+    it("should not match a plain link", () => {
+      const inputString =
+        "[write your own Input component](./Inputs.md#writing-your-own-input-component)";
+      const gifFileName = "Inputs.gif";
+      const regExp = RegExp(getRegExp(gifFileName), "g");
+      const match = inputString.match(regExp);
+      expect(match).toEqual(null);
+    });
+
+    it("should not match a gif file with another name", () => {
+      const inputString = "![TimeInput Firefox](./img/time-input-edge.gif)";
+      const gifFileName = "time-input-firefox.gif";
+      const regExp = RegExp(getRegExp(gifFileName), "g");
+      const match = inputString.match(regExp);
+      expect(match).toEqual(null);
+    });
+
+    it("should not match a jpg file", () => {
+      const inputString = "![TimeInput Firefox](./img/time-input-firefox.jpg)";
+      const gifFileName = "time-input-firefox.gif";
+      const regExp = RegExp(getRegExp(gifFileName), "g");
+      const match = inputString.match(regExp);
+      expect(match).toEqual(null);
+    });
+
+    it("should match several gifs on the same line", () => {
       const inputString =
         "| ![TimeInput Firefox](./img/time-input-firefox.gif) | ![second TimeInput Firefox](./img/time-input-firefox.gif) |";
       const gifFileName = "time-input-firefox.gif";
@@ -24,7 +49,7 @@ describe("replaceLinks", () => {
       ]);
     });
 
-    it("should match several links on multiple lines", () => {
+    it("should match several gifs on multiple lines", () => {
       const inputString = `
 # \`<TextInput>\`
 
@@ -47,7 +72,7 @@ You can make the \`<TextInput>\` component resettable using the \`resettable\` p
       ]);
     });
 
-    it("should return the image file path as first capture group", () => {
+    it("should return the gif file path as first capture group", () => {
       const inputString = "![TimeInput Firefox](./img/time-input-firefox.gif)";
       const gifFileName = "time-input-firefox.gif";
       const regExp = RegExp(getRegExp(gifFileName));
