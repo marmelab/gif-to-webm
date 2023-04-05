@@ -8,3 +8,6 @@ install: package.json ## install dependencies
 
 build: ## build the app
 	npm run build
+
+test: ## run tests
+	npm run test

@@ -1,32 +1,27 @@
 import * as fs from "fs";
-import ffmpeg from "fluent-ffmpeg";
+import ffmpeg from "js-ffmpeg";
 import chalk from "chalk";
 
 const convertSingleGifFileToWebM = (gifFile: string, quality: number) => {
   console.info(chalk.dim(`converting file '${gifFile}'...`));
-  const readStream = fs.createReadStream(gifFile);
   const folder = gifFile.split("/").slice(0, -1).join("/");
   const fileName = gifFile.split("/").pop()?.split(".").slice(0, -1).join(".");
-  var writeStream = fs.createWriteStream(`${folder}/${fileName}.webm`);
   return new Promise<string>((resolve, reject) => {
-    ffmpeg()
-      .input(readStream)
-      .inputFormat("gif_pipe")
-      .videoCodec("libvpx-vp9")
-      .format("webm")
-      .outputOptions("-b:v 0")
-      .outputOptions(`-crf ${quality}`)
-      .on("end", () => {
-        resolve(`${folder}/${fileName}.webm`);
-      })
-      .on("error", (err: any) => {
+    ffmpeg
+      .ffmpeg(
+        gifFile,
+        ["-c", "vp9", "-b:v", "0", "-crf", `${quality}`],
+        `${folder}/${fileName}.webm`
+      )
+      // @ts-ignore
+      .success(() => resolve(`${folder}/${fileName}.webm`))
+      .error(function (error: any) {
         console.error(
           chalk.red(`ffmpeg error while processing '${gifFile}'`),
-          err
+          error
         );
-        reject(err);
-      })
-      .pipe(writeStream);
+        reject(error);
+      });
   });
 };
 

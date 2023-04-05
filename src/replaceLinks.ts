@@ -2,6 +2,9 @@ import { glob } from "glob";
 import { ReplaceInFileConfig, replaceInFile } from "replace-in-file";
 import fs from "fs";
 
+export const getRegExp = (gifFileName: string) =>
+  `!\\[[^\\[]+\\]\\((\\S+${gifFileName?.replace(".", "\\.")})\\)`;
+
 const findDocFiles = async (sourceFolder: string, pattern: string) => {
   return (
     await glob(pattern, {
@@ -22,16 +25,9 @@ export const replaceLinks = async (
   const promises = gifFileNames.filter(Boolean).map((gifFileName) => {
     const options: ReplaceInFileConfig = {
       files: docFiles,
-      from: RegExp(
-        `!\\[[^\\[]+\\]\\(\\S+${gifFileName?.replace(".", "\\.")}\\)`,
-        "g"
-      ),
+      from: RegExp(getRegExp(gifFileName!), "g"),
       to: (match) => {
-        const previousLink = match.match(
-          RegExp(
-            `!\\[[^\\[]+\\]\\((\\S+${gifFileName?.replace(".", "\\.")})\\)`
-          )
-        )?.[1];
+        const previousLink = match.match(RegExp(getRegExp(gifFileName!)))?.[1];
         return templateAsString.replace(
           "%webm_file%",
           `${previousLink?.split(".").slice(0, -1).join(".")}.webm`
@@ -42,8 +38,14 @@ export const replaceLinks = async (
       results.filter((file) => file.hasChanged).map((file) => file.file)
     );
   });
-  return (await Promise.all(promises)).reduce(
-    (acc, cur) => cur.reduce((a, c) => (a.includes(c) ? a : [...a, c]), acc),
-    []
-  );
+  // We need to process the replacement promises one by one otherwise it can create concurrent
+  // editions of the same file which can lead to corrupted files.
+  const allChangedFiles: string[] = [];
+  for (const promise of promises) {
+    const changedFiles = await promise;
+    allChangedFiles.push(
+      ...changedFiles.filter((file) => !allChangedFiles.includes(file))
+    );
+  }
+  return allChangedFiles;
 };
