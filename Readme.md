@@ -38,6 +38,8 @@ Options:
   -p, --pattern <pattern>          doc files pattern (default: "**/*.md")
   -t, --template <path>            template file holding the WebM player html code (default: "./template.html")
   -q, --quality <number>           output quality, ranges between 0-63, lower means better quality (default: "40")
+  -c, --skip-gif-conversion        set this flag to skip the conversion of GIF files to WebM (default: false)
+  -r, --skip-doc-replace           set this flag to skip the doc search and replace step (default: false)
   -d, --delete-gif-files           set this flag to delete the original GIF files after conversion (default: false)
   -h, --help                       display help for command
 ```

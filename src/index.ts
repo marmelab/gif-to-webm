@@ -32,6 +32,16 @@ program
     "40"
   )
   .option(
+    "-c, --skip-gif-conversion",
+    "set this flag to skip the conversion of GIF files to WebM",
+    false
+  )
+  .option(
+    "-r, --skip-doc-replace",
+    "set this flag to skip the doc search and replace step",
+    false
+  )
+  .option(
     "-d, --delete-gif-files",
     "set this flag to delete the original GIF files after conversion",
     false
@@ -43,6 +53,8 @@ program
       pattern,
       template,
       quality,
+      skipGifConversion,
+      skipDocReplace,
       deleteGifFiles,
     } = options;
     console.log(chalk.dim("Parsed options:"));
@@ -51,6 +63,8 @@ program
     console.log(chalk.dim(`pattern: ${pattern}`));
     console.log(chalk.dim(`template: ${template}`));
     console.log(chalk.dim(`quality: ${quality}`));
+    console.log(chalk.dim(`skipGifConversion: ${skipGifConversion}`));
+    console.log(chalk.dim(`skipDocReplace: ${skipDocReplace}`));
     console.log(chalk.dim(`deleteGifFiles: ${deleteGifFiles}`));
     console.log();
 
@@ -66,47 +80,52 @@ program
         )}`
       );
 
-      const convertedFiles = await convertGifFilesToWebM(
-        folder,
-        gifFiles,
-        quality
-      );
-      console.info(
-        chalk.green(
-          `Successfully converted ${chalk.bold(convertedFiles.length)} files`
-        )
-      );
-
-      const { totalWebMFilesSize } = await parseWebMFiles(convertedFiles);
-      console.info(
-        `Total WebM files size: ${chalk.bold(
-          chalk.blue(humanFileSize(totalWebMFilesSize))
-        )}`
-      );
-      console.info(
-        `Reduced assets size by ${chalk.bold(
+      if (!skipGifConversion) {
+        const convertedFiles = await convertGifFilesToWebM(
+          folder,
+          gifFiles,
+          quality
+        );
+        console.info(
           chalk.green(
-            `${(
-              Math.round(
-                ((totalGifFilesSize - totalWebMFilesSize) / totalGifFilesSize) *
-                  10000
-              ) / 100
-            ).toFixed(2)} %`
+            `Successfully converted ${chalk.bold(convertedFiles.length)} files`
           )
-        )}!`
-      );
+        );
 
-      const replacedFiles = await replaceLinks(
-        folder,
-        pattern,
-        template,
-        gifFiles
-      );
-      console.info(
-        chalk.green(
-          `Successfully edited ${chalk.bold(replacedFiles.length)} doc files`
-        )
-      );
+        const { totalWebMFilesSize } = await parseWebMFiles(convertedFiles);
+        console.info(
+          `Total WebM files size: ${chalk.bold(
+            chalk.blue(humanFileSize(totalWebMFilesSize))
+          )}`
+        );
+        console.info(
+          `Reduced assets size by ${chalk.bold(
+            chalk.green(
+              `${(
+                Math.round(
+                  ((totalGifFilesSize - totalWebMFilesSize) /
+                    totalGifFilesSize) *
+                    10000
+                ) / 100
+              ).toFixed(2)} %`
+            )
+          )}!`
+        );
+      }
+
+      if (!skipDocReplace) {
+        const replacedFiles = await replaceLinks(
+          folder,
+          pattern,
+          template,
+          gifFiles
+        );
+        console.info(
+          chalk.green(
+            `Successfully edited ${chalk.bold(replacedFiles.length)} doc files`
+          )
+        );
+      }
 
       if (deleteGifFiles) {
         const removedFiles = await doDeleteGifFiles(folder, gifFiles);
