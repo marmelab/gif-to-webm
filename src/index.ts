@@ -29,7 +29,7 @@ program
   .option(
     "-q, --quality <number>",
     "output quality, ranges between 0-63, lower means better quality",
-    "40"
+    "18"
   )
   .option(
     "-c, --skip-gif-conversion",
@@ -46,6 +46,9 @@ program
     "set this flag to delete the original GIF files after conversion",
     false
   )
+  .option("--max-fps <number>", "maximum FPS", "15")
+  .option("--max-width <number>", "maximum video width", "1920")
+  .option("--max-height <number>", "maximum video height", "1080")
   .action(async (options) => {
     const {
       folder,
@@ -56,6 +59,9 @@ program
       skipGifConversion,
       skipDocReplace,
       deleteGifFiles,
+      maxFps,
+      maxWidth,
+      maxHeight,
     } = options;
     console.log(chalk.dim("Parsed options:"));
     console.log(chalk.dim(`folder: ${folder}`));
@@ -66,6 +72,9 @@ program
     console.log(chalk.dim(`skipGifConversion: ${skipGifConversion}`));
     console.log(chalk.dim(`skipDocReplace: ${skipDocReplace}`));
     console.log(chalk.dim(`deleteGifFiles: ${deleteGifFiles}`));
+    console.log(chalk.dim(`maxFps: ${maxFps}`));
+    console.log(chalk.dim(`maxWidth: ${maxWidth}`));
+    console.log(chalk.dim(`maxHeight: ${maxHeight}`));
     console.log();
 
     try {
@@ -81,11 +90,12 @@ program
       );
 
       if (!skipGifConversion) {
-        const convertedFiles = await convertGifFilesToWebM(
-          folder,
-          gifFiles,
-          quality
-        );
+        const convertedFiles = await convertGifFilesToWebM(folder, gifFiles, {
+          quality,
+          maxFps,
+          maxWidth,
+          maxHeight,
+        });
         console.info(
           chalk.green(
             `Successfully converted ${chalk.bold(convertedFiles.length)} files`
