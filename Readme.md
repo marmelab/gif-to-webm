@@ -15,18 +15,19 @@ This tool also supports replacing the GIF files integration in Markdown files by
 
 ```bash
 make install
+make install-cli
 ```
 
 ## Usage
 
 ```bash
-npm run dev -- -f <source_folder>
+gif-to-webm -f <source_folder>
 ```
 
 Example
 
 ```bash
-npm run dev -- -f ../react-admin
+gif-to-webm -f ../react-admin
 ```
 
 ## Options
@@ -50,12 +51,26 @@ Options:
 More complex example:
 
 ```bash
-npm run dev -- -f ../react-admin-v4 -e "node_modules/**,docs/_site/**,packages/**" -p "docs/*.md"
+gif-to-webm -f ../react-admin-v4 -e "node_modules/**,docs/_site/**,packages/**" -p "docs/*.md"
 ```
 
 ## Customizing the WebM Player
 
 You can customize the WebM player by providing your own template file in `./template.html`.
+
+## Development
+
+Use the following command to run the CLI without building it:
+
+```bash
+npm run dev -- <args>
+```
+
+Example:
+
+```bash
+npm run dev -- -f ../react-admin-v4 -e "node_modules/**,docs/_site/**,packages/**" -p "docs/*.md"
+```
 
 ## License
 
