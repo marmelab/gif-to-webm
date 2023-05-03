@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 import sourceMapSupport from "source-map-support";
 import { program } from "commander";
 import chalk from "chalk";

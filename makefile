@@ -11,3 +11,6 @@ build: ## build the app
 
 test: ## run tests
 	npm run test
+
+install-cli: build ## install the cli
+	npm install -g .
