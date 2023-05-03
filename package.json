@@ -2,7 +2,10 @@
   "name": "gif-to-webm",
   "version": "1.0.0",
   "description": "Convert GIF files to WebM and replace links to them in doc files",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "bin": {
+    "gif-to-webm": "./dist/index.js"
+  },
   "scripts": {
     "build": "cd src && tsc --outDir ../dist",
     "dev": "ts-node src/index.ts",
@@ -24,13 +27,13 @@
     "commander": "^10.0.0",
     "glob": "^9.3.2",
     "js-ffmpeg": "^0.0.38",
-    "replace-in-file": "^6.3.5"
+    "replace-in-file": "^6.3.5",
+    "source-map-support": "^0.5.21"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
     "@types/source-map-support": "^0.5.6",
     "jest": "^29.5.0",
-    "source-map-support": "^0.5.21",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.2"
